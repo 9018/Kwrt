@@ -1,11 +1,13 @@
 #=================================================
 # Build AX89X (qualcommax_ipq807x) using GitHub Actions
+# Dual trigger: repository_dispatch & manual
 #=================================================
 
 name: Build AX89X
 
 on:
-  repository_dispatch:
+  workflow_dispatch:           # 手动触发
+  repository_dispatch:         # dispatcher 调用
     types: [qualcommax_ipq807x]
 
 env:

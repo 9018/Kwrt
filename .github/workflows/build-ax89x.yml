@@ -29,7 +29,7 @@ jobs:
         sudo apt-get install -y \
           build-essential ccache ecj fastjar file g++ gawk \
           gettext git java-propose-classpath libncurses5-dev \
-          libssl-dev python3 python3-distutils python3-setuptools \
+          libssl-dev python3 python3-setuptools \
           rsync unzip zlib1g-dev wget
 
     - name: 💾 Restore build cache

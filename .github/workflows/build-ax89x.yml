@@ -1,6 +1,6 @@
 #=================================================
 # Build AX89X (qualcommax_ipq807x) using GitHub Actions
-# Dual trigger: repository_dispatch & manual
+# Safe clone + auto clean + latest OpenWrt v24
 #=================================================
 
 name: Build AX89X
@@ -38,7 +38,7 @@ jobs:
           sudo apt-get clean
           sudo apt-get autoremove -y
 
-      - name: Load device configuration
+      - name: Prepare device configuration
         run: |
           mkdir -p openwrt
           cp -rf devices/common/. openwrt/
@@ -53,10 +53,13 @@ jobs:
             cat devices/qualcommax_ipq807x/.config >> .config
           fi
 
-      - name: Clone OpenWrt source
+      - name: Clone latest OpenWrt safely
         run: |
+          rm -rf openwrt_source
+          TAG=$(curl -s https://api.github.com/repos/openwrt/openwrt/tags | jq -r '.[].name' | grep '^v24' | head -n1)
+          git clone -b $TAG https://github.com/openwrt/openwrt.git openwrt_source
+          cp -rf openwrt_source/* openwrt/
           cd openwrt
-          git clone -b openwrt-24.10 https://github.com/openwrt/openwrt.git .
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
@@ -68,6 +71,14 @@ jobs:
               git apply "$patch"
             done
           fi
+
+      - name: Clean old build files
+        run: |
+          cd openwrt
+          echo "Cleaning old build files to save space..."
+          rm -rf build_dir/!(*ipq807x*|host|hostpkg)
+          rm -rf staging_dir/!(*ipq807x*|host|hostpkg)
+          df -hT
 
       - name: Defconfig
         run: |

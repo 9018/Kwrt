@@ -47,12 +47,16 @@ jobs:
 
       - name: Inject AX89X Configuration
         run: |
-          cp -rf devices/common/. openwrt/
+          cp -rf devices/common/. openwrt/ || true
           cp -rf devices/qualcommax_ipq807x/. openwrt/
           cd openwrt
-          chmod +x devices/common/diy.sh
-          /bin/bash devices/common/diy.sh
-          cp -f devices/common/.config .config
+          # 执行 AX89X 的 diy.sh
+          if [ -f devices/qualcommax_ipq807x/diy.sh ]; then
+            chmod +x devices/qualcommax_ipq807x/diy.sh
+            /bin/bash devices/qualcommax_ipq807x/diy.sh
+          fi
+          # 合并 config
+          cp -f devices/common/.config .config 2>/dev/null || true
           if [ -f devices/qualcommax_ipq807x/.config ]; then
             sed -i 's/CONFIG_TARGET_DEVICE_qualcommax_ipq807x_DEVICE_asus_rt-ax89x=n/CONFIG_TARGET_DEVICE_qualcommax_ipq807x_DEVICE_asus_rt-ax89x=y/' devices/qualcommax_ipq807x/.config
             cat devices/qualcommax_ipq807x/.config >> .config

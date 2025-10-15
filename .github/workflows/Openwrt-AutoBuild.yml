@@ -22,7 +22,6 @@ on:
 
 env:
   REPO_TOKEN: ${{ secrets.TOKEN_KIDDIN9 }}
-  SCKEY: ${{ secrets.SCKEY }}
   TZ: Asia/Shanghai
 
 jobs:

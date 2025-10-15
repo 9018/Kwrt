@@ -8,8 +8,17 @@
 
 name: Build OpenWrt
 
+# 替换原来的 on: repository_dispatch
 on: 
-  repository_dispatch:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Build target'
+        required: true
+        default: 'qualcommax_ipq807x'
+        type: string
 
 env:
   REPO_TOKEN: ${{ secrets.TOKEN_KIDDIN9 }}
